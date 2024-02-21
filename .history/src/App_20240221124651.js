@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react';
-import {collection, getDocs, getFirestore} from 'firebase/firestore';
+import {collection, getDocs, getFirestore} from 'firebase/firestore/lite';
 import {app, database} from './firebase'
 import {doc, deleteDoc, addDoc } from "firebase/firestore";
 

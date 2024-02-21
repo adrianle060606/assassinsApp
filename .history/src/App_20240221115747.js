@@ -1,8 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react';
-import {collection, getDocs, getFirestore} from 'firebase/firestore';
-import {app, database} from './firebase'
+import {collection, getDocs, getFirestore} from 'firebase/firestore/lite';
+import {app} from './firebase'
 import {doc, deleteDoc, addDoc } from "firebase/firestore";
 
 class App extends Component{
@@ -17,7 +17,6 @@ class App extends Component{
   async refreshNotes() {
     var notesList = []
     const db = getFirestore(app);
-    
     const notesCol = collection(db, 'notes');
     const notesSnapshot = await getDocs(notesCol);
 
@@ -41,7 +40,7 @@ class App extends Component{
     var newNotesObject = {description:newNotes};
     const db = getFirestore(app);
     const notesCol = collection(db, 'notes');
-    
+    console.log(newNotes)
     await addDoc(notesCol, newNotesObject);
     this.refreshNotes()
   }
@@ -49,7 +48,7 @@ class App extends Component{
   async deleteClick(id) {
     const db = getFirestore(app);
     const notesRef = doc(db, 'notes/'+id);
-    console.log(id)
+
     await deleteDoc(notesRef);
     this.refreshNotes()
   }

@@ -1,8 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react';
-import {collection, getDocs, getFirestore} from 'firebase/firestore';
-import {app, database} from './firebase'
+import {collection, getDocs, getFirestore} from 'firebase/firestore/lite';
+import {app} from './firebase'
 import {doc, deleteDoc, addDoc } from "firebase/firestore";
 
 class App extends Component{
@@ -17,7 +17,6 @@ class App extends Component{
   async refreshNotes() {
     var notesList = []
     const db = getFirestore(app);
-    
     const notesCol = collection(db, 'notes');
     const notesSnapshot = await getDocs(notesCol);
 
@@ -40,16 +39,15 @@ class App extends Component{
     var newNotes = document.getElementById("newNotes").value;
     var newNotesObject = {description:newNotes};
     const db = getFirestore(app);
-    const notesCol = collection(db, 'notes');
-    
+    /*const notesCol = collection(db, 'notes');
     await addDoc(notesCol, newNotesObject);
-    this.refreshNotes()
+    this.refreshNotes()*/
   }
 
   async deleteClick(id) {
     const db = getFirestore(app);
     const notesRef = doc(db, 'notes/'+id);
-    console.log(id)
+
     await deleteDoc(notesRef);
     this.refreshNotes()
   }
@@ -61,12 +59,12 @@ class App extends Component{
       <div className="App">
         <h1>Assassins App</h1>
 
-        <input id = "newNotes"/>&nbsp
+        <input id = "newNotes"/>
         <button onClick={()=>this.addClick()}> Add Notes</button>
 
         {notes.map(note=>
         <p>
-        <b>* {note.description}</b>&nbsp
+        <b>* {note.description}</b>
         <button onClick={()=>this.deleteClick(note.id)}> Delete Notes</button>
         </p>
         )}
