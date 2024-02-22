@@ -1,9 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react';
-import {collection, getDocs, getFirestore, updateDoc, doc} from 'firebase/firestore';
+import {collection, getDocs, getFirestore} from 'firebase/firestore';
 import {app, database} from './firebase'
-import { deleteDoc, addDoc } from "firebase/firestore";
+import {doc, deleteDoc, addDoc } from "firebase/firestore";
 
 class App extends Component{
 
@@ -72,35 +72,7 @@ class App extends Component{
   }
 
   async submitKill() {
-    const db = getFirestore(app);
-    var killerAgentName = document.getElementById("killerName").value;
-    var victimAgentName = document.getElementById("victimName").value;
-    // find ID of victim
-    var killerID = ""
-    var currentKills = 0
-    var victimID = ""
-    this.state.users.forEach(user => {
-      if (user.agentName == killerAgentName) {
-        killerID = user.id;
-        currentKills = user.kills;
-      }
-
-      if (user.agentName == victimAgentName) {
-        victimID = user.id;
-      }
-    });
-    
-
-    var docRef = doc(db, 'users', killerID);
-    await updateDoc(docRef, {
-      kills: currentKills+1
-    });
-
-    var docRef = doc(db, 'users', victimID);
-    await updateDoc(docRef, {
-      alive: false,
-    });
-    this.refreshUsers();
+    console.log(users);
   }
 
   render() {
@@ -125,9 +97,9 @@ class App extends Component{
         )}
 
         <h2>Submit Kill</h2>
-        Your Agent Name: <input id = "killerName"/>
+        Your Agent Name: <input id = "userRealName"/>
         <br></br>
-        Your Victim's Agent Name: <input id = "victimName"/>
+        Your Victim's Agent Name: <input id = "agentName"/>
         <br></br>
         <button onClick={()=>this.submitKill()}> Submit Kill</button>
       </div>

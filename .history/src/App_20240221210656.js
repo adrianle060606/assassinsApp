@@ -100,7 +100,7 @@ class App extends Component{
     await updateDoc(docRef, {
       alive: false,
     });
-    this.refreshUsers();
+
   }
 
   render() {

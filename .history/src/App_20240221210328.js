@@ -76,31 +76,19 @@ class App extends Component{
     var killerAgentName = document.getElementById("killerName").value;
     var victimAgentName = document.getElementById("victimName").value;
     // find ID of victim
-    var killerID = ""
-    var currentKills = 0
     var victimID = ""
     this.state.users.forEach(user => {
-      if (user.agentName == killerAgentName) {
-        killerID = user.id;
-        currentKills = user.kills;
-      }
-
       if (user.agentName == victimAgentName) {
         victimID = user.id;
+
       }
     });
-    
-
-    var docRef = doc(db, 'users', killerID);
-    await updateDoc(docRef, {
-      kills: currentKills+1
-    });
-
+    console.log(victimID)
     var docRef = doc(db, 'users', victimID);
     await updateDoc(docRef, {
       alive: false,
     });
-    this.refreshUsers();
+
   }
 
   render() {
