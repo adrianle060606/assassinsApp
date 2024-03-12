@@ -1,14 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-//import {agentNameWords} from './agentNamesWords.js'
 import { Component } from 'react';
 import {collection, getDocs, getFirestore, updateDoc, doc} from 'firebase/firestore';
 import {app, database} from './firebase'
 import { deleteDoc, addDoc } from "firebase/firestore";
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import AddUsers from "./AddUsers.js"
-import Header from './Header.js';
 class App extends Component{
 
   /*
@@ -27,8 +23,7 @@ class App extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      users:[],
-      
+      users:[]
     }
   }
 
@@ -54,7 +49,21 @@ class App extends Component{
     this.refreshUsers();
   }
 
-
+  async addClick() {
+    var newUserRealName = document.getElementById("userRealName").value;
+    var newUserAgentName = document.getElementById("agentName").value;
+    var newUserObject = {
+      name: newUserRealName,
+      agentName: newUserAgentName,
+      kills: 0,
+      alive: true
+    };
+    const db = getFirestore(app);
+    const usersCol = collection(db, 'users');
+    
+    await addDoc(usersCol, newUserObject);
+    this.refreshUsers()
+  }
 
   async deleteClick(id) {
     const db = getFirestore(app);
@@ -69,55 +78,31 @@ class App extends Component{
     var killerAgentName = document.getElementById("killerName").value;
     var victimAgentName = document.getElementById("victimName").value;
     // find ID of victim
-    var killerID = "";
-    var currentKills = 0;
-    var killerTarget = "";
-    var killerAlive;
-
-    var victimID = "";
-    var victimName = "";
+    var killerID = ""
+    var currentKills = 0
+    var victimID = ""
     this.state.users.forEach(user => {
       if (user.agentName == killerAgentName) {
-        // when found killer info
         killerID = user.id;
         currentKills = user.kills;
-        killerTarget = user.target;
-        killerAlive = user.alive;
       }
 
       if (user.agentName == victimAgentName) {
-        // when found victim info
         victimID = user.id;
-        victimName = user.name;
       }
     });
+    
 
-    var errorMSG = ""
-    if (victimID === "") {
-      errorMSG = "Invalid Agent Name";
-    } else if (killerTarget.alive === false) {
-      errorMSG = "You are dead. You cannot kill!"
-    } else if (killerTarget != victimName) {
-      errorMSG = "they're not your target dipshit"
-    }
-    
-    if (errorMSG === "") {
-      // no errors
-      var docRef = doc(db, 'users', killerID);
-      await updateDoc(docRef, {
-        kills: currentKills+1
-      });
+    var docRef = doc(db, 'users', killerID);
+    await updateDoc(docRef, {
+      kills: currentKills+1
+    });
 
-      var docRef = doc(db, 'users', victimID);
-      await updateDoc(docRef, {
-        alive: false,
-      });
-      this.refreshUsers();
-    } else {
-      alert(errorMSG);
-    }
-    
-    
+    var docRef = doc(db, 'users', victimID);
+    await updateDoc(docRef, {
+      alive: false,
+    });
+    this.refreshUsers();
   }
 
   render() {
@@ -126,18 +111,17 @@ class App extends Component{
 
     return (
       <div className="App">
-        <Header></Header>
-        <Router>
-          <Routes>
-            <Route path = "/addusers" element = {<AddUsers msg= "heyy"></AddUsers>}/>
-          </Routes>
-        </Router>
+        <h1>Assassins App</h1>
 
-
+        <input id = "userRealName"/>
+        <br></br>
+        <input id = "agentName"/>
+        <br></br>
+        <button onClick={()=>this.addClick()}> Add User</button>
 
         {users.map(user=>
         <p>
-        <b>Name: {user.name}, Email: {user.email}, Agent Name: {user.agentName}, Kills: {user.kills}, Target: {user.target}, alive: {user.alive}</b>
+        <b>Name: {user.name}, Agent Name: {user.agentName}, Kills: {user.kills}, alive: {user.alive}</b>
         <button onClick={()=>this.deleteClick(user.id)}> Delete User</button>
         </p>
         )}
